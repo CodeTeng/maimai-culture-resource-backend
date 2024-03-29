@@ -1,0 +1,113 @@
+spring:
+  # DataSource Config
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/culture-resource?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+      username: root
+      password: 806823
+      # 初始化时建立物理连接的个数。初始化发生在显示调用 init 方法，或者第一次 getConnection 时
+      initialSize: 6
+      # 最小连接池数量
+      minIdle: 2
+      # 最大连接池数量
+      maxActive: 20
+      # 获取连接时最大等待时间，单位毫秒。配置了 maxWait 之后，缺省启用公平锁，
+      # 并发效率会有所下降，如果需要可以通过配置 useUnfairLock 属性为 true 使用非公平锁。
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 用来检测连接是否有效的 sql 因数据库方言而差, 例如 oracle 应该写成 SELECT 1 FROM DUAL
+      validationQuery: SELECT 1 FROM DUAL
+      # 建议配置为 true，不影响性能，并且保证安全性。申请连接的时候检测，
+      # 如果空闲时间大于 timeBetweenEvictionRunsMillis，执行 validationQuery 检测连接是否有效。
+      testWhileIdle: true
+      # 申请连接时执行 validationQuery 检测连接是否有效，做了这个配置会降低性能。
+      testOnBorrow: false
+      # 归还连接时执行 validationQuery 检测连接是否有效，做了这个配置会降低性能。
+      testOnReturn: false
+      # 是否自动回收超时连接
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
+      filters: stat,wall,slf4j
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 2000
+          db-type: mysql
+        slf4j:
+          enabled: true
+          statement-log-error-enabled: true
+          statement-create-after-log-enabled: false
+          statement-close-after-log-enabled: false
+          result-set-open-after-log-enabled: false
+          result-set-close-after-log-enabled: false
+      use-global-data-source-stat: true
+      # SQL监控
+      stat-view-servlet:
+        enabled: true
+        login-username: admin
+        login-password: 123456
+        allow:
+        deny:
+        reset-enable: false
+        url-pattern: /druid/*
+      # web拦截
+      web-stat-filter:
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.css,/druid/*"
+        enabled: true
+        session-stat-enable: true       # 开启session统计功能
+        session-stat-max-count: 1000    # session的最大个数,默认100
+      aop-patterns: com.teng.mai.mapper.* #Spring监控开启
+
+  # session 失效时间（分钟）
+  session:
+    timeout: 86400
+    # 分布式 session
+    store-type: redis
+  # redis 配置
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 0
+    lettuce:
+      pool:
+        max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1ms # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 8 # 连接池中的最大空闲连接
+        min-idle: 1  # 连接池中的最小空闲连接
+    timeout: PT10S # 连接超时时间（毫秒）
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+
+server:
+  port: 8090
+  tomcat:
+    uri-encoding: UTF-8
+    connection-timeout: 5000ms
+    threads:
+      max: 1000
+      min-spare: 30
+  servlet:
+    context-path: /api
+    session:
+      cookie:
+        domain: localhost
+
+# 对象存储
+cos:
+  client:
+    accessKey:
+    secretKey:
+    region: ap-beijing
+    bucket: muziteng-1310538376
+
