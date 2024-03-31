@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @description:
@@ -38,11 +39,11 @@ public class ArticleController {
     @Resource
     private ArticleFavService articleFavService;
 
-    @PostMapping("/searchArticle")
-    @ApiOperation("分页查询文章")
-    public BaseResponse<PageVO<ArticleVO>> searchArticle(@RequestBody @Validated ArticleSearchDTO articleSearchDTO) {
+    @GetMapping("/searchArticle")
+    @ApiOperation("根据条件查询文章")
+    public BaseResponse<List<ArticleVO>> searchArticle(@Validated ArticleSearchDTO articleSearchDTO) {
         ThrowUtils.throwIf(articleSearchDTO == null, ErrorCode.PARAMS_ERROR);
-        PageVO<ArticleVO> articlePageVO = articleService.searchArticle(articleSearchDTO);
+        List<ArticleVO> articlePageVO = articleService.searchArticle(articleSearchDTO);
         return ResultUtils.success(articlePageVO);
     }
 
@@ -66,11 +67,11 @@ public class ArticleController {
         return ResultUtils.success(true);
     }
 
-    @PostMapping("/getMyFavArticle")
-    @ApiOperation("分页查看我收藏的文章")
-    public BaseResponse<PageVO<ArticleVO>> getMyFavArticle(@RequestBody @Validated ArticleSearchDTO articleSearchDTO) {
+    @GetMapping("/getMyFavArticle")
+    @ApiOperation("查看我收藏的文章")
+    public BaseResponse<List<ArticleVO>> getMyFavArticle(@Validated ArticleSearchDTO articleSearchDTO) {
         ThrowUtils.throwIf(articleSearchDTO == null, ErrorCode.PARAMS_ERROR);
-        PageVO<ArticleVO> articleVOPageVO = articleService.getMyFavArticle(articleSearchDTO);
+        List<ArticleVO> articleVOPageVO = articleService.getMyFavArticle(articleSearchDTO);
         return ResultUtils.success(articleVOPageVO);
     }
 

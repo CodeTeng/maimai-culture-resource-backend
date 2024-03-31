@@ -52,7 +52,7 @@ public class Article implements Serializable {
     /**
      * 最新的评论id
      */
-    private Long latestReplyId;
+    private Long latestAnswerId;
 
     /**
      * 评论数量

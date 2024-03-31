@@ -5,26 +5,35 @@
 <mapper namespace="com.teng.mai.mapper.ArticleMapper">
 
     <resultMap id="BaseResultMap" type="com.teng.mai.model.entity.Article">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="userId" column="user_id" jdbcType="BIGINT"/>
-            <result property="articleContent" column="article_content" jdbcType="VARCHAR"/>
-            <result property="articleCover" column="article_cover" jdbcType="VARCHAR"/>
-            <result property="articleTitle" column="article_title" jdbcType="VARCHAR"/>
-            <result property="articleAbstract" column="article_abstract" jdbcType="VARCHAR"/>
-            <result property="latestReplyId" column="latest_reply_id" jdbcType="BIGINT"/>
-            <result property="replyTimes" column="reply_times" jdbcType="INTEGER"/>
-            <result property="favTimes" column="fav_times" jdbcType="INTEGER"/>
-            <result property="type" column="type" jdbcType="TINYINT"/>
-            <result property="url" column="url" jdbcType="VARCHAR"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="deleted" column="deleted" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="articleContent" column="article_content" jdbcType="VARCHAR"/>
+        <result property="articleCover" column="article_cover" jdbcType="VARCHAR"/>
+        <result property="articleTitle" column="article_title" jdbcType="VARCHAR"/>
+        <result property="articleAbstract" column="article_abstract" jdbcType="VARCHAR"/>
+        <result property="latestAnswerId" column="latest_answer_id" jdbcType="BIGINT"/>
+        <result property="replyTimes" column="reply_times" jdbcType="INTEGER"/>
+        <result property="favTimes" column="fav_times" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="TINYINT"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deleted" column="deleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,user_id,article_content,
         article_cover,article_title,article_abstract,
-        latest_reply_id,reply_times,fav_times,type,
+        latest_answer_id,reply_times,fav_times,type,
         url,create_time,update_time,deleted
     </sql>
+
+    <select id="getMyFavArticle" resultType="java.lang.Long">
+        select distinct a.id
+        from article a
+                 left join article_fav af on a.id = af.article_id
+                 left join article_tag at on a.id = at.article_id
+        where af.user_id = #{userId}
+          and at.tag_id = #{tagId}
+    </select>
 </mapper>

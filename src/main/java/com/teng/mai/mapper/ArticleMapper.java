@@ -2,6 +2,9 @@ package com.teng.mai.mapper;
 
 import com.teng.mai.model.entity.Article;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author teng
@@ -11,6 +14,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface ArticleMapper extends BaseMapper<Article> {
 
+    List<Long> getMyFavArticle(@Param("userId") Long userId, @Param("tagId") Long tagId);
 }
 
 

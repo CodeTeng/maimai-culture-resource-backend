@@ -13,12 +13,11 @@ import lombok.NoArgsConstructor;
  * @author: ~Teng~
  * @date: 2024/3/22 23:38
  */
-@EqualsAndHashCode(callSuper = true)
 @ApiModel("文章搜索DTO")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ArticleSearchDTO extends PageQuery {
+public class ArticleSearchDTO {
     @ApiModelProperty("搜索关键词")
     private String keyword;
     @ApiModelProperty("标签id")

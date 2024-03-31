@@ -1,8 +1,12 @@
 package com.teng.mai.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.teng.mai.common.ErrorCode;
 import com.teng.mai.common.page.PageVO;
 import com.teng.mai.constant.UserConstant;
@@ -96,6 +100,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 4. 用户脱敏
         UserVO userVO = BeanCopyUtils.copyObject(user, UserVO.class);
         userVO.setAccessToken(token);
+        Gson gson = new Gson();
+        userVO.setUserTags(gson.fromJson(user.getTags(), new TypeToken<List<String>>() {
+        }.getType()));
         return userVO;
     }
 
@@ -112,7 +119,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (user.getUserStatus() == UserStatusEnum.DISABLED || user.getUserRole().contains(UserRoleEnum.BAN.getValue())) {
             throw new BusinessException(ErrorCode.ACCOUNT_LOCKOUT);
         }
-        return BeanCopyUtils.copyObject(user, UserVO.class);
+        UserVO userVO = BeanCopyUtils.copyObject(user, UserVO.class);
+        Gson gson = new Gson();
+        userVO.setUserTags(gson.fromJson(user.getTags(), new TypeToken<List<String>>() {
+        }.getType()));
+        return userVO;
     }
 
     @Override
@@ -198,6 +209,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         List<UserVO> userVOList = userList.stream().map(user -> {
             UserVO userVO = BeanCopyUtils.copyObject(user, UserVO.class);
             userVO.setFollowed(true);
+            Gson gson = new Gson();
+            userVO.setUserTags(gson.fromJson(user.getTags(), new TypeToken<List<String>>() {
+            }.getType()));
             return userVO;
         }).toList();
         return PageVO.of(userPage, userVOList);
@@ -287,9 +301,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             UserVO userVO = BeanCopyUtils.copyObject(user, UserVO.class);
             // 查询我是否关注了它
             userVO.setFollowed(finalUserIds.contains(user.getId()));
+            Gson gson = new Gson();
+            userVO.setUserTags(gson.fromJson(user.getTags(), new TypeToken<List<String>>() {
+            }.getType()));
             return userVO;
         }).toList();
         return PageVO.of(userPage, userVOList);
+    }
+
+    @Override
+    public void updateUserTags(List<String> tags) {
+        Long userId = getCurrentUser().getId();
+        User user = new User();
+        Gson gson = new Gson();
+        String tagsJson = gson.toJson(tags);
+        user.setId(userId);
+        user.setTags(tagsJson);
+        updateById(user);
     }
 }
 

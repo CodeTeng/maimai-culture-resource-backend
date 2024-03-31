@@ -9,6 +9,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @description:
@@ -41,6 +42,8 @@ public class UserVO implements Serializable {
     private LocalDate userBirthday;
     @ApiModelProperty("用户简介")
     private String userProfile;
+    @ApiModelProperty("用户选择的标签")
+    private List<String> userTags;
     @ApiModelProperty("账户状态：0-禁用 1-正常")
     private UserStatusEnum userStatus;
     @ApiModelProperty("创建时间")

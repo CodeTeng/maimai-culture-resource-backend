@@ -17,6 +17,7 @@
             <result property="userAvatar" column="user_avatar" jdbcType="VARCHAR"/>
             <result property="userBirthday" column="user_birthday" jdbcType="DATE"/>
             <result property="userProfile" column="user_profile" jdbcType="VARCHAR"/>
+            <result property="tags" column="tags" jdbcType="VARCHAR"/>
             <result property="userStatus" column="user_status" jdbcType="TINYINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -28,7 +29,7 @@
         user_role,user_phone,user_real_name,
         user_gender,user_age,user_email,
         user_avatar,user_birthday,user_profile,
-        user_status,create_time,
+        tags,user_status,create_time,
         update_time,deleted
     </sql>
 </mapper>

@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import lombok.Data;
 
@@ -22,7 +21,7 @@ public class Reply implements Serializable {
     /**
      * 主键id
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -59,11 +58,6 @@ public class Reply implements Serializable {
      * 评论数量
      */
     private Integer replyTimes;
-
-    /**
-     * 点赞数量
-     */
-    private Integer likedTimes;
 
     /**
      * 是否被隐藏，默认false

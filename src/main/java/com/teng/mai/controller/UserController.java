@@ -1,6 +1,8 @@
 package com.teng.mai.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.teng.mai.common.BaseResponse;
 import com.teng.mai.common.ErrorCode;
 import com.teng.mai.common.ResultUtils;
@@ -41,11 +43,7 @@ public class UserController {
     @Resource
     private UserFollowService userFollowService;
     @Resource
-    private ArticleService articleService;
-    @Resource
     private FriendsService friendsService;
-    @Resource
-    private CommentService commentService;
 
     @PostMapping("/register")
     @ApiOperation("用户注册")
@@ -109,6 +107,9 @@ public class UserController {
         if (count > 0) {
             userVO.setFollowed(true);
         }
+        Gson gson = new Gson();
+        userVO.setUserTags(gson.fromJson(user.getTags(), new TypeToken<List<String>>() {
+        }.getType()));
         return ResultUtils.success(userVO);
     }
 
@@ -163,12 +164,11 @@ public class UserController {
         return ResultUtils.success((long) friendsSet.size());
     }
 
-    @GetMapping("/getMyCommentCount")
-    @ApiOperation("查看我评论的数量")
-    public BaseResponse<Long> getMyCommentCount() {
-        UserVO user = userService.getCurrentUser();
-        Long userId = user.getId();
-        long count = commentService.count(new LambdaQueryWrapper<Comment>().eq(Comment::getUserId, userId));
-        return ResultUtils.success(count);
+    @PutMapping("/update/tags")
+    @ApiOperation("更新用户标签")
+    public BaseResponse<Boolean> updateUserTags(@RequestBody List<String> tags) {
+        ThrowUtils.throwIf(CollUtils.isEmpty(tags), ErrorCode.PARAMS_ERROR);
+        userService.updateUserTags(tags);
+        return ResultUtils.success(true);
     }
 }

@@ -13,7 +13,6 @@
         <result property="targetUserId" column="target_user_id" jdbcType="BIGINT"/>
         <result property="targetReplyId" column="target_reply_id" jdbcType="BIGINT"/>
         <result property="replyTimes" column="reply_times" jdbcType="INTEGER"/>
-        <result property="likedTimes" column="liked_times" jdbcType="INTEGER"/>
         <result property="hidden" column="hidden" jdbcType="BIT"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -23,7 +22,7 @@
     <sql id="Base_Column_List">
         id,article_id,answer_id,
         user_id,content,target_user_id,
-        target_reply_id,reply_times,liked_times,
+        target_reply_id,reply_times,
         hidden,create_time,update_time,
         deleted
     </sql>

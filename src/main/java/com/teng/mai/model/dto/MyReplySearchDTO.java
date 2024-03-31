@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 /**
  * @description:
  * @author: ~Teng~
- * @date: 2024/3/25 22:16
+ * @date: 2024/3/31 16:06
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@ApiModel("评论搜索DTO")
+@ApiModel("我的评论搜索")
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentSearchDTO extends PageQuery {
-    @ApiModelProperty("评论的内容")
-    private String commentContent;
+public class MyReplySearchDTO extends PageQuery {
+    @ApiModelProperty("搜索关键词")
+    private String keyword;
 }

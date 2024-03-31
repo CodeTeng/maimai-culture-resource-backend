@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.teng.mai.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author teng
@@ -59,4 +60,9 @@ public interface UserService extends IService<User> {
      * 分页查看关注我的用户
      */
     PageVO<UserVO> getFolMyUser(FolSearchDTO folSearchDTO);
+
+    /**
+     * 更新用户标签
+     */
+    void updateUserTags(List<String> tags);
 }

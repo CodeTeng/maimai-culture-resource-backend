@@ -26,8 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -46,32 +48,35 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
     private UserMapper userMapper;
     @Resource
     private ArticleTagService articleTagService;
+    @Resource
+    private ArticleMapper articleMapper;
 
     @Override
-    public PageVO<ArticleVO> searchArticle(ArticleSearchDTO articleSearchDTO) {
+    public List<ArticleVO> searchArticle(ArticleSearchDTO articleSearchDTO) {
         Long userId = userService.getCurrentUser().getId();
         // 1. 查看标签下的所有文档id
         Long tagId = articleSearchDTO.getTagId();
-        List<ArticleTag> articleTagList = articleTagService.list(new LambdaQueryWrapper<ArticleTag>().eq(tagId != null, ArticleTag::getTagId, tagId));
+        List<ArticleTag> articleTagList = articleTagService.list(new LambdaQueryWrapper<ArticleTag>()
+                .eq(tagId != null, ArticleTag::getTagId, tagId));
         if (CollUtils.isEmpty(articleTagList)) {
-            return PageVO.empty(0L, 0L);
+            return new ArrayList<>();
         }
         List<Long> articleIdList = articleTagList.stream().map(ArticleTag::getArticleId).toList();
-        // 2. 根据条件分页搜索
+        // 2. 根据条件搜索
         String keyword = articleSearchDTO.getKeyword();
-        Page<Article> articlePage = lambdaQuery()
+        List<Article> articleList = lambdaQuery()
                 .in(Article::getId, articleIdList)
                 .like(StringUtils.isNotBlank(keyword), Article::getArticleTitle, keyword)
-                .page(articleSearchDTO.toMpPageDefaultSortByCreateTimeDesc());
-        List<Article> articleList = articlePage.getRecords();
+                .orderByDesc(Article::getCreateTime)
+                .list();
         if (CollUtils.isEmpty(articleList)) {
-            return PageVO.empty(articlePage);
+            return new ArrayList<>();
         }
         // 3. 转 VO
         List<Long> userIdList = articleList.stream().map(Article::getUserId).toList();
         List<User> userList = userMapper.selectBatchIds(userIdList);
         Map<Long, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, u -> u));
-        List<ArticleVO> articleVOList = articleList.stream().map(article -> {
+        return articleList.stream().map(article -> {
             ArticleVO articleVO = BeanCopyUtils.copyObject(article, ArticleVO.class);
             // 判断是否被自己收藏
             Long count = articleFavMapper.selectCount(new LambdaQueryWrapper<ArticleFav>()
@@ -85,7 +90,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
             }
             return articleVO;
         }).toList();
-        return PageVO.of(articlePage, articleVOList);
     }
 
     @Override
@@ -153,30 +157,29 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
     }
 
     @Override
-    public PageVO<ArticleVO> getMyFavArticle(ArticleSearchDTO articleSearchDTO) {
-        // 1. 查询我收藏的文章的id
+    public List<ArticleVO> getMyFavArticle(ArticleSearchDTO articleSearchDTO) {
+        // 1. 根据关键词和标签查询我收藏的文章的id
         UserVO currentUser = userService.getCurrentUser();
         Long userId = currentUser.getId();
-        List<ArticleFav> articleFavList = articleFavMapper.selectList(new LambdaQueryWrapper<ArticleFav>()
-                .eq(ArticleFav::getUserId, userId));
-        if (CollUtils.isEmpty(articleFavList)) {
-            return PageVO.empty(new Page<>());
+        Long tagId = articleSearchDTO.getTagId();
+        List<Long> favArticleIdList = articleMapper.getMyFavArticle(userId, tagId);
+        if (CollUtils.isEmpty(favArticleIdList)) {
+            return new ArrayList<>();
         }
-        List<Long> articleIdList = articleFavList.stream().map(ArticleFav::getArticleId).toList();
         // 2. 根据关键词查询文章
         String keyword = articleSearchDTO.getKeyword();
-        Page<Article> articlePage = lambdaQuery()
-                .in(Article::getId, articleIdList)
+        List<Article> articleList = lambdaQuery()
+                .in(Article::getId, favArticleIdList)
                 .like(StringUtils.isNotBlank(keyword), Article::getArticleTitle, keyword)
-                .page(articleSearchDTO.toMpPageDefaultSortByCreateTimeDesc());
-        List<Article> articleList = articlePage.getRecords();
+                .orderByDesc(Article::getCreateTime)
+                .list();
         if (CollUtils.isEmpty(articleList)) {
-            return PageVO.empty(articlePage);
+            return new ArrayList<>();
         }
         List<Long> userIdList = articleList.stream().map(Article::getUserId).toList();
         List<User> userList = userMapper.selectBatchIds(userIdList);
         Map<Long, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, u -> u));
-        List<ArticleVO> articleVOList = articleList.stream().map(article -> {
+        return articleList.stream().map(article -> {
             ArticleVO articleVO = BeanCopyUtils.copyObject(article, ArticleVO.class);
             articleVO.setFavStatus(true);
             User user = userMap.get(article.getUserId());
@@ -187,7 +190,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
             }
             return articleVO;
         }).toList();
-        return PageVO.of(articlePage, articleVOList);
     }
 }
 

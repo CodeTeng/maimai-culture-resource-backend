@@ -108,6 +108,6 @@ cos:
   client:
     accessKey:
     secretKey:
-    region: ap-beijing
-    bucket: muziteng-1310538376
+    region:
+    bucket:
 

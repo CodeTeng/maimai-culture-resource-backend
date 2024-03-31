@@ -18,7 +18,7 @@ public interface ArticleService extends IService<Article> {
     /**
      * 分页搜索文章
      */
-    PageVO<ArticleVO> searchArticle(ArticleSearchDTO articleSearchDTO);
+    List<ArticleVO> searchArticle(ArticleSearchDTO articleSearchDTO);
 
     /**
      * 浏览文章
@@ -31,7 +31,7 @@ public interface ArticleService extends IService<Article> {
     void favOrCancelFav(Long id, Long type);
 
     /**
-     * 分页查看我收藏的文章
+     * 查看我收藏的文章
      */
-    PageVO<ArticleVO> getMyFavArticle(ArticleSearchDTO articleSearchDTO);
+    List<ArticleVO> getMyFavArticle(ArticleSearchDTO articleSearchDTO);
 }

@@ -11,6 +11,7 @@ import java.util.Date;
 
 import com.teng.mai.model.enums.UserGenderEnum;
 import com.teng.mai.model.enums.UserStatusEnum;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -80,6 +81,9 @@ public class User implements Serializable {
      * 用户简介
      */
     private String userProfile;
+
+    @ApiModelProperty("用户选择的标签json列表")
+    private String tags;
 
     /**
      * 账号状态：0-禁用 1-正常

@@ -1,8 +1,12 @@
 package com.teng.mai.service;
 
+import com.teng.mai.common.page.PageVO;
+import com.teng.mai.model.dto.MyReplySearchDTO;
 import com.teng.mai.model.dto.ReplyAddDTO;
+import com.teng.mai.model.dto.ReplySearchDTO;
 import com.teng.mai.model.entity.Reply;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.teng.mai.model.vo.ReplyVO;
 
 /**
  * @author teng
@@ -15,4 +19,19 @@ public interface ReplyService extends IService<Reply> {
      * 新增回复或评论
      */
     void addReply(ReplyAddDTO replyAddDTO);
+
+    /**
+     * 分页查询评论列表
+     */
+    PageVO<ReplyVO> queryReplyPage(ReplySearchDTO replySearchDTO);
+
+    /**
+     * 分页查询我的评论列表
+     */
+    PageVO<ReplyVO> queryMyReplyPage(MyReplySearchDTO myReplySearchDTO);
+
+    /**
+     * 删除我的评论
+     */
+    void deleteMyReply(Long id);
 }
